@@ -27,9 +27,9 @@ function createPhotosMarkup (photosArray) {
     return  photosArray.map(({preview, original, description}) => {
         return `
         <li class="gallery__item">
-        <a class="gallery__link" href="${original}">
+        <a class="gallery__link " href="${original}">
         <img
-        class="gallery__image"
+        class="gallery__image gallery__link"
         src="${preview}"
         data-source="${original}"
         alt="${description}"
