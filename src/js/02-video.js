@@ -1,19 +1,29 @@
 
-// import Vimeo from 'vimeo-player';
+import Player from '@vimeo/player';
+import throttle from 'lodash.throttle';
 
-// const iframe = document.querySelector('iframe');
-// const player = new Vimeo.Player(iframe);
+const iframe = document.querySelector('#vimeo-player');
+const player = new Player(iframe);
 
-// player.on('play', function() {
-//     console.log('played the video!');
-// });
+const LOCALSTORAGE_KEY = "videoplayer-current-time";
 
-// player.getVideoTitle().then(function(title) {
-//     console.log('title:', title);
-// });
+const saveCurrentTimeToLS = () => {
+    player.getCurrentTime().then((time) => {
+        localStorage.setItem(LOCALSTORAGE_KEY, time);
+    });
+};
 
-// const onPlay = function(data) {
-//     // data is an object containing properties specific to that event
-// };
+const restoreCurrentTimeFromLS = () => {
+    const savedTime = localStorage.getItem(LOCALSTORAGE_KEY);
+    if (savedTime) {
+        player.setCurrentTime(parseFloat(savedTime)).catch((error) => {
+            console.error('Failed to set current time:', error);
+        });
+    }
+}
 
-// player.on('play', onPlay);
+player.on('timeupdate', throttle(saveCurrentTimeToLS, 1000));
+
+player.ready().then(() => {
+    restoreCurrentTimeFromLS();
+});
